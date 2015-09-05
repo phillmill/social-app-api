@@ -13,6 +13,7 @@ It will authenticate with both Facebook and standalone manually created users. S
 - Optionally, you may retrieve a Google Places API key if you wish to take advantage of this API's geolocation features.
 
 <h2>Installation:</h2>
+First, create the database that will be used for the Social App API. Simply import the sql file found in databases/social-app-api.sql.
 
 Now you can upload the api/ directory to your server of choice and configure it. To do that you will edit config.ini that looks like what you see below.
 
