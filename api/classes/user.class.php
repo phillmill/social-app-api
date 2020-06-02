@@ -44,30 +44,30 @@ class User {
 	public function existsAlready() {
 		global $f3, $db;
 		if($this->email) {
-		    $check_sql = "SELECT id FROM user WHERE email = ?";
-		    $check_query = $db->prepare($check_sql);
-		    $sql_params = array($this->email);
-		    $check_query->execute($sql_params);
-		    // Set object ID if successful, in case it's needed later
-		    if($this->id = $check_query->fetchColumn()) {
-		    	return true;
-		    } else {
-		    	return false;
-		    }
+			$check_sql = "SELECT id FROM user WHERE email = ?";
+			$check_query = $db->prepare($check_sql);
+			$sql_params = array($this->email);
+			$check_query->execute($sql_params);
+			// Set object ID if successful, in case it's needed later
+			if($this->id = $check_query->fetchColumn()) {
+				return true;
+			} else {
+				return false;
+			}
 		} else if($this->facebook_id) {
 			$check_sql = "SELECT id FROM user WHERE facebook_id = ?";
-		    $check_query = $db->prepare($check_sql);
-		    $sql_params = array($this->facebook_id);
-		    $check_query->execute($sql_params);
-		    // Set object ID if successful, in case it's needed later
-		    if($this->id = $check_query->fetchColumn()) {
-		    	return true;
-		    } else {
-		    	return false;
-		    }
-	    } else {
+			$check_query = $db->prepare($check_sql);
+			$sql_params = array($this->facebook_id);
+			$check_query->execute($sql_params);
+			// Set object ID if successful, in case it's needed later
+			if($this->id = $check_query->fetchColumn()) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
 			throw new Exception('No email has been added to the object.');
-	    }
+		}
 	}
 
 	/**
@@ -177,7 +177,8 @@ class User {
 
 		    $check_query = $db->prepare($check_sql);
 		    $check_query->execute($sql_params);
-		    $result = $check_query->fetch(PDO::FETCH_OBJ);
+				$result = $check_query->fetch(PDO::FETCH_OBJ);
+				
 		    // Set ID / email / facebook_id if they're not already in object, may need them later
 		    if(@$result->id) $this->id = $result->id;
 		    if(@$result->email) $this->email = $result->email;
@@ -330,7 +331,7 @@ class User {
 			throw new Exception('Need at least email or id to get user info');
 		}
 	    
-	    $sql_params = array();
+	  $sql_params = array();
 	}
 
 	/**
@@ -343,14 +344,14 @@ class User {
 		global $f3, $db;
 		if($facebook_id) {
 			$sql = "SELECT id FROM user WHERE facebook_id = ?";
-		    $query = $db->prepare($sql);
-		    $sql_params = array($facebook_id);
-		    $query->execute($sql_params);
-		    if($user_id = $query->fetchColumn()) {
-		    	return $user_id;
-		    } else {
-		    	return false;
-		    }
+			$query = $db->prepare($sql);
+			$sql_params = array($facebook_id);
+			$query->execute($sql_params);
+			if($user_id = $query->fetchColumn()) {
+				return $user_id;
+			} else {
+				return false;
+			}
 		} else {
 			throw new Exception('No facebook id was provided');
 		}
@@ -377,9 +378,9 @@ class User {
 			} else {
 				return false;
 			}
-	    } else {
+		} else {
 			throw new Exception('No id was provided/in object.');
-	    }
+		}
 	}
 
 	/**
@@ -437,13 +438,13 @@ class User {
 				}
 
 			// The Graph API returned an error
-		    } catch (FacebookRequestException $e) {
-		      echo $e->getMessage();
+			} catch (FacebookRequestException $e) {
+				echo $e->getMessage();
 
-		    // Some other error occurred
-		    } catch (\Exception $e) {
-		      echo $e->getMessage();
-		    }
+			// Some other error occurred
+			} catch (\Exception $e) {
+				echo $e->getMessage();
+			}
 		}
 
 		// Next we'll check the database for an image,
@@ -455,11 +456,12 @@ class User {
 			$sql .= 'id = ?';
 			$sql_params = array($this->id);
 		}
-	    $query = $db->prepare($sql);
-	    $query->execute($sql_params);
-	    if($image = $query->fetchColumn()) {
-	    	return $image;
-	    }
+
+		$query = $db->prepare($sql);
+		$query->execute($sql_params);
+		if($image = $query->fetchColumn()) {
+			return $image;
+		}
 
 		// As a last resort we'll reach out to gravatar
 		return getUserImage($this->email);
@@ -508,14 +510,14 @@ class User {
 					if($friendship->friend_id == $this->id) {
 						// Update record to be accepted
 						$sql = "UPDATE friendship ";
-					    $sql .= "SET accepted = 1, date_request_accepted = UNIX_TIMESTAMP() ";
-					    $sql .= "WHERE id = ?";
-					    $query = $db->prepare($sql);
-					    $sql_params = array($id);
-					    if($query->execute($sql_params)) {
-					    	unset($sql, $query, $sql_params);
-					    	// Insert a record this this user as well
-					    	$sql = "INSERT INTO friendship ";
+						$sql .= "SET accepted = 1, date_request_accepted = UNIX_TIMESTAMP() ";
+						$sql .= "WHERE id = ?";
+						$query = $db->prepare($sql);
+						$sql_params = array($id);
+						if($query->execute($sql_params)) {
+							unset($sql, $query, $sql_params);
+							// Insert a record this this user as well
+							$sql = "INSERT INTO friendship ";
 							$sql .= "(user_id, friend_id, accepted, date_request_accepted) ";
 							$sql .= "VALUES (?, ?, 1, UNIX_TIMESTAMP());";
 							$query = $db->prepare($sql);
@@ -526,9 +528,9 @@ class User {
 							} else {
 								return false;
 							}
-					    } else {
-					    	return false;
-					    }
+						} else {
+							return false;
+						}
 					} else {
 						return false;
 					}
@@ -664,8 +666,8 @@ class User {
 				$num++;
 			}
 			return $winner;
-	    } else if($this->first_name && $this->last_name) {
-	    	$base_handle = strtolower(sprintf('%s%s', $this->first_name, $this->last_name));
+	  } else if($this->first_name && $this->last_name) {
+	    $base_handle = strtolower(sprintf('%s%s', $this->first_name, $this->last_name));
 			$unique = false;
 			// Keep going through the gears till we find a unique handle
 			$num = 1;
@@ -683,10 +685,10 @@ class User {
 				$num++;
 			}
 			return $winner;
-	    }
-	    else {
+		}
+		else {
 			throw new Exception('Not enough information was provided/in object to generate a handle.');
-	    }
+		}
 	}
 
 	/**
@@ -718,7 +720,7 @@ class User {
 		    }
 	    } else {
 	    	return false;
-			// throw new Exception('No email was provided/in object.');
+				// throw new Exception('No email was provided/in object.');
 	    }
 	}
 
@@ -749,8 +751,8 @@ class User {
 		global $f3, $db;
 		if($password) {
 			return md5($password.$f3->get('md5_salt'));
-	    } else {
+		} else {
 			throw new Exception('No password provided.');
-	    }
+		}
 	}
 }
